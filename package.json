@@ -9,9 +9,16 @@
   "author": "Tariq Sulehri",
   "license": "ISC",
   "dependencies": {
+    "config": "^3.1.0",
+    "debug": "^4.1.1",
     "express": "^4.17.1",
+    "helmet": "^3.18.0",
+    "http": "0.0.0",
+    "jshint": "^2.10.2",
     "mongoose": "^5.5.14",
+    "morgan": "^1.9.1",
     "nodemon": "^1.19.1",
+    "pug": "^2.0.3",
     "underscore": "^1.9.1"
   }
 }
