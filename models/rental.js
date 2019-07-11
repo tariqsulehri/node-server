@@ -60,7 +60,7 @@ const Rental = mongoose.model('Rental', new mongoose.Schema({
           min:0,
       }
 
-
+s
 
 }));
 

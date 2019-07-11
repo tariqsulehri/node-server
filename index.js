@@ -166,6 +166,10 @@ app.use('/api/customers' , customers); //mean any route will start /api/course u
 const movies = require('./routes/movies');
 app.use('/api/movies' , movies); //mean any route will start /api/course use this router
 
+const users = require('./routes/users');
+app.use('/api/users' , users); //mean any route will start /api/course use this router
+
+
 app.use(express.json());
 app.use(express.urlencoded({extended:true})); //to avoid body-parser depricated
                                               // with this option we can pass arrays and complex objects   
