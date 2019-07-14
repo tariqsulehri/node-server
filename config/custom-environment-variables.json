@@ -1,5 +1,7 @@
 {
-    "mail": {
+    "jwtPrivateKey":"vidly_jwtPrivateKey",
+    "name" : "My Application Default",
+     "mail": {
          "password" : "1234"
      }     
   }

@@ -1,4 +1,4 @@
 {
-  "name" : "My Application Default"
-
+  "name" : "My Application Default",
+  "jwtPrivateKey":""
 }

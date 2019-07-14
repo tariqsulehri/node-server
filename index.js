@@ -3,6 +3,10 @@ const express = require('express');
 const joi     = require('Joi');
 const app =  express();
 
+const bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 mongoose.connect('mongodb://localhost/vidly',{useNewUrlParser:true})
    .then(()=> console.log("Connected to MongoDB"))
    .catch(err => console.error('Could not connect to MongoDB',err));
@@ -151,6 +155,14 @@ app.set('views','./views') //default
 //config  is an other package to handle configurations.
 const config = require('config');
 
+//const dotenv = require('dotenv');
+//dotenv.config();
+
+if(!config.get('jwtPrivateKey')){
+     console.log("FATAL ERROR: jwtPrivateKey not Defined");
+     process.exit(1);
+};
+
 const startupDebugger =  require('debug')('app:startup');
 const dbDebugger =  require('debug')('app:db');
 
@@ -158,7 +170,7 @@ const helmet = require('helmet'); // secure you request by setting verious heade
 const morgan =  require('morgan'); //log your http requests
 
 const genres = require('./routes/genres');
-app.use('/api/genre',genres); //mean any route will start /api/course use this router
+app.use('/api/genres',genres); //mean any route will start /api/course use this router
 
 const customers = require('./routes/customers');
 app.use('/api/customers' , customers); //mean any route will start /api/course use this router
@@ -166,8 +178,14 @@ app.use('/api/customers' , customers); //mean any route will start /api/course u
 const movies = require('./routes/movies');
 app.use('/api/movies' , movies); //mean any route will start /api/course use this router
 
+
+const auth = require('./routes/auth');
+app.use('/api/auth' , auth); //mean any route will start /api/course use this router
+
 const users = require('./routes/users');
 app.use('/api/users' , users); //mean any route will start /api/course use this router
+
+
 
 
 app.use(express.json());
@@ -176,7 +194,6 @@ app.use(express.urlencoded({extended:true})); //to avoid body-parser depricated
 app.use(express.static("public"));  //you can put your static file here images, css, textfiles etc.
                                     //static contents server from root of the site
                                     // localhost:3200/readme.txt  
-
 //Third Party Middlewear
 app.use(helmet()); // secure you request by setting verious header
 
@@ -207,7 +224,6 @@ app.use(function(req, res, next){
    next();   
       
 });
-
 
 const port =  process.env.PORT || 3200;
 
