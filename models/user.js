@@ -25,7 +25,7 @@ const userSchema= new mongoose.Schema({
 });
 
 userSchema.methods.getrateAuthToken = function() {
-    const token = jwt.sign({_id:this._id}, config.get('jwtPrivateKey'));
+    const token = jwt.sign({_id:this._id}, 'node_secureJwtKey') // config.get('jwtPrivateKey'));
     return token;
 }
 

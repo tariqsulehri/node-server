@@ -1,3 +1,6 @@
+require('express-async-errors');
+const winston = require('winston');
+require('winston-mongodb');
 const mongoose = require('mongoose');
 const express = require('express');
 const joi     = require('Joi');
@@ -6,6 +9,30 @@ const app =  express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// process.on('uncaughtException', (ex)=>{
+//    console.log('WE GOT AN UNCAUGHT EXCEPTION');
+//    winston.error(ex.message, ex);
+//    process.exit(1);
+// });
+
+winston.ExceptionHandler(
+   new winston.transports.File({filename : 'uncaughtException.log'}))
+
+process.on('unhandledRejection', (ex)=>{
+   // console.log('WE GOT AN UN-HANDLED PROMISE REJECTION');
+   // winston.error(ex.message, ex);
+   // process.exit(1);
+   throw ex;
+});
+
+const files = new winston.transports.File({
+      filename : 'logfile.log'
+});
+
+const dbwinston = new winston.transports.MongoDB({
+           db:'mongodb://localhost/vidly'
+});
 
 mongoose.connect('mongodb://localhost/vidly',{useNewUrlParser:true})
    .then(()=> console.log("Connected to MongoDB"))
@@ -158,10 +185,12 @@ const config = require('config');
 //const dotenv = require('dotenv');
 //dotenv.config();
 
-if(!config.get('jwtPrivateKey')){
-     console.log("FATAL ERROR: jwtPrivateKey not Defined");
-     process.exit(1);
-};
+
+
+// if(!config.get('jwtPrivateKey')){
+//      console.log("FATAL ERROR: jwtPrivateKey not Defined");
+//      process.exit(1);
+// };
 
 const startupDebugger =  require('debug')('app:startup');
 const dbDebugger =  require('debug')('app:db');
@@ -185,7 +214,8 @@ app.use('/api/auth' , auth); //mean any route will start /api/course use this ro
 const users = require('./routes/users');
 app.use('/api/users' , users); //mean any route will start /api/course use this router
 
-
+const error =  require('./middleware/error');
+app.use(error);
 
 
 app.use(express.json());
@@ -208,16 +238,6 @@ if(app.get('env')==='development'){
      console.log(`NODE_ENV : ${process.env.NODE_ENV}`);
      console.log(`env : ${app.get('env')}`);
      startupDebugger('Morgan Enable...');
-}
-
-dbDebugger('Connected to the database');
-//Setting up Environments Development, Production
-//Some time you want to set some options on production Environment
-//Some time you want to set some options on production Production
-
-//rc      is the popular package to handle configurations. -->Most popular
-//config  is an other package to handle configurations.
-
 app.use(function(req, res, next){
 //Moddilewear
    console.log('Logging',req.hostname, req.path ,req.url);
@@ -231,5 +251,4 @@ app.listen(port,()=>{
   console.log(`Listening on Port : ${port}`);
 });
 
-
-
+}
